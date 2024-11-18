@@ -2,6 +2,7 @@
 # Planejamento
 
 -Título: CaronaSolidária 
+
 -Objetivos: Criar um aplicativo funcional para organizar caronas solidária entre usuários, permitindo economia e redução de emissão de carbono.
 
 Funcionalidades:
