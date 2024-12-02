@@ -1,1 +1,70 @@
 # Para configurar o banco de dados e modelos
+
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    phone TEXT NOT NULL,
+    password TEXT NOT NULL
+);
+
+CREATE TABLE rides (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    startPoint TEXT NOT NULL,
+    destination TEXT NOT NULL,
+    time TEXT NOT NULL,
+    seats INTEGER NOT NULL,
+    userId INTEGER,
+    FOREIGN KEY (userId) REFERENCES users(id)
+);
+
+CREATE TABLE reservations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    userId INTEGER,
+    rideId INTEGER,
+    FOREIGN KEY (userId) REFERENCES users(id),
+    FOREIGN KEY (rideId) REFERENCES rides(id)
+);
+3. Frontend
+Usaremos React para criar o frontend. Estrutura básica:
+
+Componentes:
+Cadastro de Usuários: Formulário para nome, e-mail, telefone e senha.
+Listagem de Caronas: Lista com detalhes das caronas.
+Criação de Carona: Formulário para ponto de partida, destino, horário e número de vagas.
+Reserva de Carona: Botão para reservar.
+Histórico de Caronas: Tela mostrando caronas realizadas e oferecidas.
+Exemplo de código para Listagem de Caronas:
+
+jsx
+Copiar código
+import React, { useState, useEffect } from 'react';
+
+const RideList = () => {
+    const [rides, setRides] = useState([]);
+
+    useEffect(() => {
+        fetch('http://localhost:3000/rides')
+            .then(res => res.json())
+            .then(data => setRides(data));
+    }, []);
+
+    return (
+        <div>
+            <h1>Listagem de Caronas</h1>
+            <ul>
+                {rides.map(ride => (
+                    <li key={ride.id}>
+                        <strong>Partida:</strong> {ride.startPoint}<br />
+                        <strong>Destino:</strong> {ride.destination}<br />
+                        <strong>Horário:</strong> {ride.time}<br />
+                        <strong>Vagas:</strong> {ride.seats}
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+};
+
+export default RideList;
+
