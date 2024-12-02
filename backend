@@ -1,1 +1,54 @@
 # Para implementar as APIs e lógica de negócios.
+
+const express = require('express');
+const app = express();
+app.use(express.json());
+
+let users = [];
+let rides = [];
+let reservations = [];
+
+// Cadastro de usuários
+app.post('/users', (req, res) => {
+    const { name, email, phone, password } = req.body;
+    users.push({ id: users.length + 1, name, email, phone, password });
+    res.status(201).json({ message: 'Usuário cadastrado com sucesso!' });
+});
+
+// Listagem de caronas
+app.get('/rides', (req, res) => {
+    res.json(rides);
+});
+
+// Criação de carona
+app.post('/rides', (req, res) => {
+    const { startPoint, destination, time, seats } = req.body;
+    rides.push({ id: rides.length + 1, startPoint, destination, time, seats });
+    res.status(201).json({ message: 'Carona criada com sucesso!' });
+});
+
+// Reserva de carona
+app.post('/rides/:id/reserve', (req, res) => {
+    const rideId = parseInt(req.params.id);
+    const ride = rides.find(r => r.id === rideId);
+    if (!ride || ride.seats === 0) {
+        return res.status(400).json({ message: 'Carona não disponível.' });
+    }
+    ride.seats -= 1;
+    reservations.push({ rideId, userId: req.body.userId });
+    res.json({ message: 'Reserva feita com sucesso!' });
+});
+
+// Histórico de caronas
+app.get('/history', (req, res) => {
+    const userId = req.query.userId;
+    const offeredRides = rides.filter(r => r.userId === parseInt(userId));
+    const reservedRides = reservations
+        .filter(r => r.userId === parseInt(userId))
+        .map(r => rides.find(ride => ride.id === r.rideId));
+    res.json({ offeredRides, reservedRides });
+});
+
+app.listen(3000, () => console.log('Server running on port 3000'));
+
+
