@@ -1,1 +1,31 @@
 Para desenvolver a interface do usuário
+import React, { useState, useEffect } from 'react';
+
+const RideList = () => {
+    const [rides, setRides] = useState([]);
+
+    useEffect(() => {
+        fetch('http://localhost:3000/rides')
+            .then(res => res.json())
+            .then(data => setRides(data));
+    }, []);
+
+    return (
+        <div>
+            <h1>Listagem de Caronas</h1>
+            <ul>
+                {rides.map(ride => (
+                    <li key={ride.id}>
+                        <strong>Partida:</strong> {ride.startPoint}<br />
+                        <strong>Destino:</strong> {ride.destination}<br />
+                        <strong>Horário:</strong> {ride.time}<br />
+                        <strong>Vagas:</strong> {ride.seats}
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+};
+
+export default RideList;
+
